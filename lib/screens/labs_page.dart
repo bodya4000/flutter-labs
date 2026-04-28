@@ -25,9 +25,9 @@ class LabsPage extends StatelessWidget {
           LabListTile(
             title: 'Lab 2',
             onTap: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute<void>(builder: (_) => const Lab2Page()));
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const HomePage()),
+              );
             },
           ),
         ],
