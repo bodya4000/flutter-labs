@@ -4,9 +4,9 @@ import 'package:unik_mobile/theme/app_theme.dart';
 class AppCard extends StatelessWidget {
   const AppCard({
     required this.child,
-    this.borderRadius = 16,
+    this.borderRadius = AppRadius.lg,
     this.backgroundColor,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = const EdgeInsets.all(AppSpacing.s16),
     super.key,
   });
 

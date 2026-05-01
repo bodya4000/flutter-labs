@@ -15,9 +15,10 @@ class AppButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final AppButtonVariant variant;
 
-  static const _br = BorderRadius.all(Radius.elliptical(12, 12));
   static const _size = Size(double.infinity, 52);
-  static const _shape = RoundedRectangleBorder(borderRadius: _br);
+  static const _shape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
+  );
 
   @override
   Widget build(BuildContext context) {

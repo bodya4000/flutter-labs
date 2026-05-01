@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unik_mobile/theme/app_theme.dart';
 
 class SpellInputCard extends StatelessWidget {
   const SpellInputCard({
@@ -18,10 +19,10 @@ class SpellInputCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.s16),
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
       ),
       child: Column(
         children: <Widget>[
@@ -34,13 +35,13 @@ class SpellInputCard extends StatelessWidget {
               hintText: 'Type number or Avada Kedavra',
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
           LinearProgressIndicator(
             value: energy / 100,
             minHeight: 10,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppRadius.sm),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.s8),
           Text('Magic energy: $energy%'),
         ],
       ),

@@ -26,19 +26,19 @@ class LoginPage extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: AppSpacing.pageHorizontal,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.s24),
                   const Icon(
                     Icons.home_work_rounded,
                     size: 72,
                     color: AppTheme.primary,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.s16),
                   const Text(
                     'UNIK IoT',
                     style: TextStyle(
@@ -48,30 +48,30 @@ class LoginPage extends StatelessWidget {
                       letterSpacing: 2,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.s4),
                   const Text(
                     'Smart Home Platform',
                     style: TextStyle(color: AppTheme.muted, fontSize: 14),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: AppSpacing.s40),
                   const AppInput(
                     label: 'Email',
                     keyboardType: TextInputType.emailAddress,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.s16),
                   const AppInput(label: 'Password', obscureText: true),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.s24),
                   AppButton(
                     label: 'Sign In',
                     onPressed: () => _goHome(context),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.s12),
                   AppButton(
                     label: 'Create Account',
                     variant: AppButtonVariant.ghost,
                     onPressed: () => _goRegister(context),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: AppSpacing.s24),
                 ],
               ),
             ),

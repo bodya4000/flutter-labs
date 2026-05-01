@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/widgets/spell_input_card.dart';
+import 'package:unik_mobile/components/lab1/spell_input_card.dart';
+import 'package:unik_mobile/theme/app_theme.dart';
 
 class Lab1Page extends StatefulWidget {
   const Lab1Page({required this.title, super.key});
@@ -59,8 +60,8 @@ class _Lab1PageState extends State<Lab1Page> {
     final Color cardColor = _isAvada
         ? Colors.red.shade200
         : parsedInput != null
-            ? Colors.green.shade200
-            : scheme.surfaceContainerHighest;
+        ? Colors.green.shade200
+        : scheme.surfaceContainerHighest;
 
     return Scaffold(
       appBar: AppBar(
@@ -68,7 +69,7 @@ class _Lab1PageState extends State<Lab1Page> {
         title: Text(widget.title),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.s16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -76,23 +77,23 @@ class _Lab1PageState extends State<Lab1Page> {
               'Counter: $_counter',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.s16),
             SpellInputCard(
               controller: _controller,
               onChanged: (_) => setState(() {}),
               energy: energy,
               backgroundColor: cardColor,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.s16),
             Text(_message, textAlign: TextAlign.center),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.s8),
             Text(
               hasInput
                   ? _isAvada
-                      ? 'Fatal spell mode'
-                      : parsedInput != null
-                          ? 'Numeric spell ready'
-                          : 'Unknown spell'
+                        ? 'Fatal spell mode'
+                        : parsedInput != null
+                        ? 'Numeric spell ready'
+                        : 'Unknown spell'
                   : 'Waiting for spell',
               style: Theme.of(context).textTheme.titleMedium,
             ),

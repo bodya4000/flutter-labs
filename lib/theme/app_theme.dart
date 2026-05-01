@@ -1,5 +1,27 @@
 import 'package:flutter/material.dart';
 
+abstract final class AppSpacing {
+  static const double s2 = 2;
+  static const double s4 = 4;
+  static const double s8 = 8;
+  static const double s12 = 12;
+  static const double s16 = 16;
+  static const double s20 = 20;
+  static const double s24 = 24;
+  static const double s28 = 28;
+  static const double s32 = 32;
+  static const double s40 = 40;
+
+  static const EdgeInsets pageHorizontal =
+      EdgeInsets.symmetric(horizontal: s24);
+}
+
+abstract final class AppRadius {
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+}
+
 abstract final class AppTheme {
   static const Color primary = Color(0xFF00CFFD);
   static const Color onPrimary = Color(0xFF000000);
@@ -32,15 +54,15 @@ abstract final class AppTheme {
           labelStyle: const TextStyle(color: muted),
           hintStyle: const TextStyle(color: muted),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             borderSide: const BorderSide(color: Colors.transparent),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             borderSide: const BorderSide(color: Colors.transparent),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.md),
             borderSide: const BorderSide(color: primary, width: 1.5),
           ),
         ),

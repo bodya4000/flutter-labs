@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:unik_mobile/components/lab_list_tile.dart';
 import 'package:unik_mobile/screens/lab1/page.dart';
 import 'package:unik_mobile/screens/lab2/page.dart';
-import 'package:unik_mobile/widgets/lab_list_tile.dart';
 
 class LabsPage extends StatelessWidget {
   const LabsPage({super.key});
@@ -25,9 +25,9 @@ class LabsPage extends StatelessWidget {
           LabListTile(
             title: 'Lab 2',
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const HomePage()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute<void>(builder: (_) => const HomePage()));
             },
           ),
         ],
