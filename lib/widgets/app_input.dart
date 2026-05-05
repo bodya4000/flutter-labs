@@ -7,6 +7,7 @@ class AppInput extends StatelessWidget {
     this.hint,
     this.obscureText = false,
     this.keyboardType,
+    this.errorText,
     super.key,
   });
 
@@ -15,6 +16,7 @@ class AppInput extends StatelessWidget {
   final String? hint;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class AppInput extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        errorText: errorText,
       ),
     );
   }
