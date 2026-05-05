@@ -28,6 +28,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _submit() async {
+    final online = await AppScope.connectivity.checkOnline();
+    if (!mounted) {
+      return;
+    }
+    if (!online) {
+      AppToast.show(
+        context,
+        'No internet connection. Connect and try again.',
+        variant: AppToastVariant.error,
+      );
+      return;
+    }
     setState(() => _busy = true);
     final outcome = await AppScope.authService.login(
       email: _emailController.text,

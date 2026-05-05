@@ -60,6 +60,18 @@ class _RegisterPageState extends State<RegisterPage> {
         matchErr != null) {
       return;
     }
+    final online = await AppScope.connectivity.checkOnline();
+    if (!mounted) {
+      return;
+    }
+    if (!online) {
+      AppToast.show(
+        context,
+        'No internet connection. Connect and try again.',
+        variant: AppToastVariant.error,
+      );
+      return;
+    }
     setState(() => _busy = true);
     final outcome = await AppScope.authService.register(
       fullName: _nameController.text,

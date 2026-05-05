@@ -28,7 +28,30 @@ class ActionButtons extends StatelessWidget {
           label: 'Sign Out',
           variant: AppButtonVariant.ghost,
           onPressed: () async {
+            final ok = await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Sign out'),
+                content: const Text(
+                  'Are you sure you want to leave this session?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Sign out'),
+                  ),
+                ],
+              ),
+            );
+            if (ok != true || !context.mounted) {
+              return;
+            }
             await AppScope.authService.logout();
+            await AppScope.mqtt.disconnect();
             if (!context.mounted) {
               return;
             }
