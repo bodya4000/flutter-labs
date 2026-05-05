@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/app/lab2/page.dart';
+import 'package:unik_mobile/app/lab2/register_inputs.dart';
 import 'package:unik_mobile/core/config/app_scope.dart';
+import 'package:unik_mobile/core/navigation/lab2_auth_gate.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/core/toast/app_toast.dart';
 import 'package:unik_mobile/domain/auth/registration_validator.dart';
-import 'package:unik_mobile/widgets/app_button.dart';
-import 'package:unik_mobile/widgets/app_input.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -17,11 +16,13 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
 
   String? _nameError;
   String? _emailError;
+  String? _nicknameError;
   String? _passwordError;
   String? _confirmError;
 
@@ -31,12 +32,18 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _nicknameController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    final nickname = _nicknameController.text;
+    final nicknameErr = RegistrationValidator.firstOf([
+      if (nickname.trim().isNotEmpty)
+        RegistrationValidator.validateNickname(nickname),
+    ]);
     final nameErr = RegistrationValidator.validateFullName(
       _nameController.text,
     );
@@ -51,13 +58,15 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       _nameError = nameErr;
       _emailError = emailErr;
+      _nicknameError = nicknameErr;
       _passwordError = pwdErr;
       _confirmError = matchErr;
     });
     if (nameErr != null ||
         emailErr != null ||
         pwdErr != null ||
-        matchErr != null) {
+        matchErr != null ||
+        nicknameErr != null) {
       return;
     }
     final online = await AppScope.connectivity.checkOnline();
@@ -78,6 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
       email: _emailController.text,
       password: _passwordController.text,
       confirmPassword: _confirmController.text,
+      nickname: nickname,
     );
     if (!mounted) {
       return;
@@ -92,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(builder: (_) => const HomePage()),
+      MaterialPageRoute<void>(builder: (_) => const Lab2AuthGate()),
       (route) => route.isFirst,
     );
   }
@@ -109,47 +119,21 @@ class _RegisterPageState extends State<RegisterPage> {
               constraints: const BoxConstraints(maxWidth: 480),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: AppSpacing.s16),
-                  AppInput(
-                    label: 'Full Name',
-                    controller: _nameController,
-                    errorText: _nameError,
-                  ),
-                  const SizedBox(height: AppSpacing.s16),
-                  AppInput(
-                    label: 'Email',
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _emailController,
-                    errorText: _emailError,
-                  ),
-                  const SizedBox(height: AppSpacing.s16),
-                  AppInput(
-                    label: 'Password',
-                    obscureText: true,
-                    controller: _passwordController,
-                    errorText: _passwordError,
-                  ),
-                  const SizedBox(height: AppSpacing.s16),
-                  AppInput(
-                    label: 'Confirm Password',
-                    obscureText: true,
-                    controller: _confirmController,
-                    errorText: _confirmError,
-                  ),
-                  const SizedBox(height: AppSpacing.s28),
-                  AppButton(
-                    label: _busy ? 'Creating…' : 'Register',
-                    onPressed: _busy ? null : _submit,
-                  ),
-                  const SizedBox(height: AppSpacing.s12),
-                  AppButton(
-                    label: 'Back to Sign In',
-                    variant: AppButtonVariant.ghost,
-                    onPressed: _busy ? null : () => Navigator.of(context).pop(),
-                  ),
-                  const SizedBox(height: AppSpacing.s24),
-                ],
+                children: registerAccountInputs(
+                  nameController: _nameController,
+                  emailController: _emailController,
+                  nicknameController: _nicknameController,
+                  passwordController: _passwordController,
+                  confirmController: _confirmController,
+                  nameError: _nameError,
+                  emailError: _emailError,
+                  nicknameError: _nicknameError,
+                  passwordError: _passwordError,
+                  confirmError: _confirmError,
+                  busy: _busy,
+                  onSubmit: _submit,
+                  onBack: () => Navigator.of(context).pop(),
+                ),
               ),
             ),
           ),

@@ -3,18 +3,20 @@ import 'package:unik_mobile/core/config/app_scope.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/core/toast/app_toast.dart';
 import 'package:unik_mobile/domain/auth/registration_validator.dart';
+import 'package:unik_mobile/screens/lab2/profile/profile_credentials_fields.dart';
 import 'package:unik_mobile/widgets/app_button.dart';
-import 'package:unik_mobile/widgets/app_input.dart';
 
 class ProfileEditSheet extends StatefulWidget {
   const ProfileEditSheet({
     required this.initialFullName,
     required this.initialEmail,
+    required this.initialNickname,
     super.key,
   });
 
   final String initialFullName;
   final String initialEmail;
+  final String initialNickname;
 
   @override
   State<ProfileEditSheet> createState() => _ProfileEditSheetState();
@@ -23,11 +25,13 @@ class ProfileEditSheet extends StatefulWidget {
 class _ProfileEditSheetState extends State<ProfileEditSheet> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
+  late final TextEditingController _nicknameController;
   late final TextEditingController _passwordController;
   late final TextEditingController _confirmController;
 
   String? _nameError;
   String? _emailError;
+  String? _nicknameError;
   String? _passwordError;
   String? _confirmError;
 
@@ -38,6 +42,7 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
     super.initState();
     _nameController = TextEditingController(text: widget.initialFullName);
     _emailController = TextEditingController(text: widget.initialEmail);
+    _nicknameController = TextEditingController(text: widget.initialNickname);
     _passwordController = TextEditingController();
     _confirmController = TextEditingController();
   }
@@ -46,16 +51,24 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _nicknameController.dispose();
     _passwordController.dispose();
     _confirmController.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
+    final nick = _nicknameController.text;
     final nameErr = RegistrationValidator.validateFullName(
       _nameController.text,
     );
-    final emailErr = RegistrationValidator.validateEmail(_emailController.text);
+    final emailErr = RegistrationValidator.validateEmail(
+      _emailController.text,
+    );
+    final nickErr = RegistrationValidator.firstOf([
+      if (nick.trim().isNotEmpty)
+        RegistrationValidator.validateNickname(nick),
+    ]);
     final pwdErr = RegistrationValidator.validateOptionalNewPassword(
       newPassword: _passwordController.text,
       confirmNewPassword: _confirmController.text,
@@ -63,10 +76,14 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
     setState(() {
       _nameError = nameErr;
       _emailError = emailErr;
+      _nicknameError = nickErr;
       _passwordError = pwdErr;
       _confirmError = pwdErr;
     });
-    if (nameErr != null || emailErr != null || pwdErr != null) {
+    if (nameErr != null ||
+        emailErr != null ||
+        nickErr != null ||
+        pwdErr != null) {
       return;
     }
     setState(() => _busy = true);
@@ -75,6 +92,7 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
       email: _emailController.text,
       newPassword: _passwordController.text,
       confirmNewPassword: _confirmController.text,
+      nickname: nick,
     );
     if (!mounted) {
       return;
@@ -108,31 +126,17 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
           children: [
             Text('Edit profile', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.s16),
-            AppInput(
-              label: 'Full Name',
-              controller: _nameController,
-              errorText: _nameError,
-            ),
-            const SizedBox(height: AppSpacing.s16),
-            AppInput(
-              label: 'Email',
-              keyboardType: TextInputType.emailAddress,
-              controller: _emailController,
-              errorText: _emailError,
-            ),
-            const SizedBox(height: AppSpacing.s16),
-            AppInput(
-              label: 'New password (optional)',
-              obscureText: true,
-              controller: _passwordController,
-              errorText: _passwordError,
-            ),
-            const SizedBox(height: AppSpacing.s16),
-            AppInput(
-              label: 'Confirm new password',
-              obscureText: true,
-              controller: _confirmController,
-              errorText: _confirmError,
+            ProfileCredentialsFields(
+              nameController: _nameController,
+              emailController: _emailController,
+              nicknameController: _nicknameController,
+              passwordController: _passwordController,
+              confirmController: _confirmController,
+              nameError: _nameError,
+              emailError: _emailError,
+              nicknameError: _nicknameError,
+              passwordError: _passwordError,
+              confirmError: _confirmError,
             ),
             const SizedBox(height: AppSpacing.s24),
             AppButton(

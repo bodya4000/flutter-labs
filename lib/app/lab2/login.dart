@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/app/lab2/page.dart';
 import 'package:unik_mobile/app/lab2/register.dart';
 import 'package:unik_mobile/core/config/app_scope.dart';
+import 'package:unik_mobile/core/navigation/lab2_auth_gate.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/core/toast/app_toast.dart';
 import 'package:unik_mobile/widgets/app_button.dart';
@@ -28,18 +28,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _submit() async {
-    final online = await AppScope.connectivity.checkOnline();
-    if (!mounted) {
-      return;
-    }
-    if (!online) {
-      AppToast.show(
-        context,
-        'No internet connection. Connect and try again.',
-        variant: AppToastVariant.error,
-      );
-      return;
-    }
     setState(() => _busy = true);
     final outcome = await AppScope.authService.login(
       email: _emailController.text,
@@ -58,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(builder: (_) => const HomePage()),
+      MaterialPageRoute<void>(builder: (_) => const Lab2AuthGate()),
       (route) => route.isFirst,
     );
   }

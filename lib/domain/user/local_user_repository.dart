@@ -9,8 +9,8 @@ final class LocalUserRepository implements UserRepository {
 
   final KeyValueStorage _storage;
 
-  static const String _userKey = 'lab3_registered_user_v1';
-  static const String _sessionKey = 'lab3_session_email_v1';
+  static const String _userKey = 'lab5_registered_user_v2';
+  static const String _sessionKey = 'lab5_session_email_v1';
 
   @override
   Future<RegisteredUser?> getStoredUser() async {

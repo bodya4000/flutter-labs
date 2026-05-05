@@ -5,6 +5,7 @@ import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/screens/lab2/profile/action_buttons.dart';
 import 'package:unik_mobile/screens/lab2/profile/identity_header.dart';
 import 'package:unik_mobile/screens/lab2/profile/profile_edit_sheet.dart';
+import 'package:unik_mobile/screens/lab2/profile/profile_pin_card.dart';
 import 'package:unik_mobile/screens/lab2/profile/stats_row.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (_) => ProfileEditSheet(
         initialFullName: user.fullName,
         initialEmail: user.email,
+        initialNickname: user.nickname,
       ),
     ).then((_) {
       if (mounted) {
@@ -85,7 +87,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       IdentityHeader(
                         fullName: user.fullName,
                         email: user.email,
+                        nickname: user.nickname,
                       ),
+                      const SizedBox(height: AppSpacing.s24),
+                      const ProfilePinCard(),
                       const SizedBox(height: AppSpacing.s32),
                       const StatsRow(),
                       const SizedBox(height: AppSpacing.s32),

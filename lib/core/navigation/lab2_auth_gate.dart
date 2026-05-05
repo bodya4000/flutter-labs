@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:unik_mobile/app/lab2/device_pin_barrier.dart';
 import 'package:unik_mobile/app/lab2/login.dart';
 import 'package:unik_mobile/app/lab2/page.dart';
 import 'package:unik_mobile/core/config/app_scope.dart';
@@ -12,7 +13,8 @@ class Lab2AuthGate extends StatefulWidget {
 }
 
 class _Lab2AuthGateState extends State<Lab2AuthGate> {
-  late final Future<({bool loggedIn, bool online})> _future;
+  late Future<({bool loggedIn, bool online, bool pinActive})> _future;
+  bool _pinPassed = false;
 
   @override
   void initState() {
@@ -20,10 +22,11 @@ class _Lab2AuthGateState extends State<Lab2AuthGate> {
     _future = _load();
   }
 
-  Future<({bool loggedIn, bool online})> _load() async {
+  Future<({bool loggedIn, bool online, bool pinActive})> _load() async {
     final loggedIn = await AppScope.authService.isLoggedIn();
     final online = await AppScope.connectivity.checkOnline();
-    return (loggedIn: loggedIn, online: online);
+    final pinActive = await AppScope.devicePinVault.hasConfiguredPin();
+    return (loggedIn: loggedIn, online: online, pinActive: pinActive);
   }
 
   @override
@@ -44,6 +47,12 @@ class _Lab2AuthGateState extends State<Lab2AuthGate> {
         }
         if (!data.loggedIn) {
           return const LoginPage();
+        }
+        final needPin = data.pinActive && !_pinPassed;
+        if (needPin) {
+          return DevicePinBarrier(
+            onUnlocked: () => setState(() => _pinPassed = true),
+          );
         }
         return HomePage(warnOfflineOnOpen: !data.online);
       },

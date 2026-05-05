@@ -1,4 +1,32 @@
 abstract final class RegistrationValidator {
+  static String? validatePin(String value) {
+    final t = value.trim();
+    if (t.length < 4 || t.length > 8) {
+      return 'PIN needs 4–8 digits';
+    }
+    if (RegExp(r'[^\d]').hasMatch(t)) {
+      return 'PIN must be digits only';
+    }
+    return null;
+  }
+
+  static String? validateNickname(String value) {
+    final t = value.trim();
+    if (t.length > 40) {
+      return 'Nickname max 40 characters';
+    }
+    return null;
+  }
+
+  static String? firstOf(List<String?> errors) {
+    for (final e in errors) {
+      if (e != null) {
+        return e;
+      }
+    }
+    return null;
+  }
+
   static String? validateFullName(String value) {
     final trimmed = value.trim();
     if (trimmed.isEmpty) {

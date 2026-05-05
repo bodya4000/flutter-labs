@@ -5,11 +5,13 @@ class IdentityHeader extends StatelessWidget {
   const IdentityHeader({
     required this.fullName,
     required this.email,
+    this.nickname = '',
     super.key,
   });
 
   final String fullName;
   final String email;
+  final String nickname;
 
   static String initialsFor(String value) {
     final parts = value
@@ -35,7 +37,9 @@ class IdentityHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme tt = Theme.of(context).textTheme;
-    final initials = initialsFor(fullName);
+    final nick = nickname.trim();
+    final display = nick.isNotEmpty ? nick : fullName;
+    final initials = initialsFor(display);
     return Column(
       children: [
         CircleAvatar(
@@ -52,6 +56,13 @@ class IdentityHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.s16),
         Text(fullName, style: tt.headlineMedium),
+        if (nick.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.s4),
+          Text(
+            '@$nick',
+            style: const TextStyle(color: AppTheme.muted, fontSize: 16),
+          ),
+        ],
         const SizedBox(height: AppSpacing.s4),
         Text(email, style: const TextStyle(color: AppTheme.muted)),
       ],
