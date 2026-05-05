@@ -1,23 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/screens/lab2/page.dart';
-import 'package:unik_mobile/screens/lab2/register_page.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/app/lab2/page.dart';
+import 'package:unik_mobile/app/lab2/register.dart';
+import 'package:unik_mobile/core/config/app_scope.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
+import 'package:unik_mobile/core/toast/app_toast.dart';
 import 'package:unik_mobile/widgets/app_button.dart';
 import 'package:unik_mobile/widgets/app_input.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
-  void _goHome(BuildContext context) {
-    Navigator.of(context).pushReplacement(
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    setState(() => _busy = true);
+    final outcome = await AppScope.authService.login(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() => _busy = false);
+    if (!outcome.isSuccess) {
+      AppToast.show(
+        context,
+        outcome.errorMessage ?? 'Sign in failed',
+        variant: AppToastVariant.error,
+      );
+      return;
+    }
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute<void>(builder: (_) => const HomePage()),
+      (route) => route.isFirst,
     );
   }
 
-  void _goRegister(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const RegisterPage()),
-    );
+  void _goRegister() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const RegisterPage()));
   }
 
   @override
@@ -54,22 +91,27 @@ class LoginPage extends StatelessWidget {
                     style: TextStyle(color: AppTheme.muted, fontSize: 14),
                   ),
                   const SizedBox(height: AppSpacing.s40),
-                  const AppInput(
+                  AppInput(
                     label: 'Email',
                     keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
                   ),
                   const SizedBox(height: AppSpacing.s16),
-                  const AppInput(label: 'Password', obscureText: true),
+                  AppInput(
+                    label: 'Password',
+                    obscureText: true,
+                    controller: _passwordController,
+                  ),
                   const SizedBox(height: AppSpacing.s24),
                   AppButton(
-                    label: 'Sign In',
-                    onPressed: () => _goHome(context),
+                    label: _busy ? 'Signing in…' : 'Sign In',
+                    onPressed: _busy ? null : _submit,
                   ),
                   const SizedBox(height: AppSpacing.s12),
                   AppButton(
                     label: 'Create Account',
                     variant: AppButtonVariant.ghost,
-                    onPressed: () => _goRegister(context),
+                    onPressed: _busy ? null : _goRegister,
                   ),
                   const SizedBox(height: AppSpacing.s24),
                 ],

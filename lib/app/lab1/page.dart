@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/components/lab1/spell_input_card.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
+import 'package:unik_mobile/screens/lab1/spell_input_card.dart';
 
 class Lab1Page extends StatefulWidget {
   const Lab1Page({required this.title, super.key});
