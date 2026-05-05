@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
 
 class SpellInputCard extends StatelessWidget {
   const SpellInputCard({

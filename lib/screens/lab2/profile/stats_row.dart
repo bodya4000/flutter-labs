@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/widgets/app_card.dart';
 
 class StatsRow extends StatelessWidget {
@@ -8,11 +8,7 @@ class StatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    const stats = [
-      ('12', 'Devices'),
-      ('4', 'Rooms'),
-      ('7', 'Routines'),
-    ];
+    const stats = [('12', 'Devices'), ('4', 'Rooms'), ('7', 'Routines')];
     return Row(
       children: [
         for (final (value, label) in stats) ...[
@@ -35,8 +31,7 @@ class StatsRow extends StatelessWidget {
               ),
             ),
           ),
-          if (label != 'Routines')
-            const SizedBox(width: AppSpacing.s8),
+          if (label != 'Routines') const SizedBox(width: AppSpacing.s8),
         ],
       ],
     );

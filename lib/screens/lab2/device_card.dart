@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/components/lab2/device.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
+import 'package:unik_mobile/screens/lab2/device.dart';
 import 'package:unik_mobile/widgets/app_card.dart';
 
 class DashboardDeviceCard extends StatelessWidget {
