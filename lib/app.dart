@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/screens/labs_page.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/app/page.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
 
 class UnikApp extends StatelessWidget {
   const UnikApp({super.key});
