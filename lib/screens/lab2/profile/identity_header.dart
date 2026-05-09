@@ -6,12 +6,14 @@ class IdentityHeader extends StatelessWidget {
     required this.fullName,
     required this.email,
     this.nickname = '',
+    this.onAvatarLongPress,
     super.key,
   });
 
   final String fullName;
   final String email;
   final String nickname;
+  final VoidCallback? onAvatarLongPress;
 
   static String initialsFor(String value) {
     final parts = value
@@ -40,20 +42,24 @@ class IdentityHeader extends StatelessWidget {
     final nick = nickname.trim();
     final display = nick.isNotEmpty ? nick : fullName;
     final initials = initialsFor(display);
+    final avatar = CircleAvatar(
+      radius: 48,
+      backgroundColor: AppTheme.secondary,
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: Color(0xFFFFFFFF),
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
     return Column(
       children: [
-        CircleAvatar(
-          radius: 48,
-          backgroundColor: AppTheme.secondary,
-          child: Text(
-            initials,
-            style: const TextStyle(
-              color: Color(0xFFFFFFFF),
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        if (onAvatarLongPress == null)
+          avatar
+        else
+          GestureDetector(onLongPress: onAvatarLongPress, child: avatar),
         const SizedBox(height: AppSpacing.s16),
         Text(fullName, style: tt.headlineMedium),
         if (nick.isNotEmpty) ...[

@@ -20,11 +20,23 @@ async function register(req, res) {
 
 async function login(req, res) {
   try {
-    const { email, password } = req.body;
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    const logged = { ...body };
+    console.log('[login] req.body', logged);
+    if (!Object.keys(body).length) {
+      console.log(
+        '[login] body empty — ensure Content-Type: application/json '
+          + String(req.headers['content-type'] ?? ''),
+      );
+    }
+    const { email, password } = req.body || {};
     if (!email || !password) {
       return res.status(400).json({ message: 'Missing email or password' });
     }
     const out = await loginUser(email, password);
+    console.log('[login] success', {
+      email: String(email).trim().toLowerCase(),
+    });
     res.json(out);
   } catch (e) {
     res.status(e.status || 500).json({ message: e.message || 'Error' });

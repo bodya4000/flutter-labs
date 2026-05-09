@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unik_mobile/core/config/app_scope.dart';
 import 'package:unik_mobile/core/navigation/lab2_navigation.dart';
-import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/domain/user/registered_user.dart';
-import 'package:unik_mobile/screens/lab2/profile/action_buttons.dart';
-import 'package:unik_mobile/screens/lab2/profile/identity_header.dart';
 import 'package:unik_mobile/screens/lab2/profile/profile_edit_sheet.dart';
-import 'package:unik_mobile/screens/lab2/profile/profile_pin_card.dart';
-import 'package:unik_mobile/screens/lab2/profile/stats_row.dart';
+import 'package:unik_mobile/screens/lab2/profile/profile_scroll_body.dart';
 import 'package:unik_mobile/state/profile_pin/profile_pin_cubit.dart';
 import 'package:unik_mobile/state/session/session_cubit.dart';
 
@@ -63,54 +59,11 @@ class ProfilePage extends StatelessWidget {
           builder: (context, user) {
             return user == null
                 ? const Center(child: Text('No profile'))
-                : ProfileBody(
+                : ProfileScrollBody(
                     user: user,
                     onDeleteAccount: () => _confirmDelete(context),
                   );
           },
-        ),
-      ),
-    );
-  }
-}
-
-final class ProfileBody extends StatelessWidget {
-  const ProfileBody({
-    required this.user,
-    required this.onDeleteAccount,
-    super.key,
-  });
-
-  final RegisteredUser user;
-  final VoidCallback onDeleteAccount;
-
-  @override
-  Widget build(BuildContext context) {
-    void openSheet() => ProfileEditSheet.open(context, user);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.s24),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: Column(
-            children: [
-              IdentityHeader(
-                fullName: user.fullName,
-                email: user.email,
-                nickname: user.nickname,
-              ),
-              const SizedBox(height: AppSpacing.s24),
-              const ProfilePinCard(),
-              const SizedBox(height: AppSpacing.s32),
-              const StatsRow(),
-              const SizedBox(height: AppSpacing.s32),
-              ActionButtons(
-                onEditProfile: openSheet,
-                onDeleteAccount: onDeleteAccount,
-              ),
-            ],
-          ),
         ),
       ),
     );

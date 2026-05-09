@@ -1,4 +1,4 @@
-const { verifyToken, parseBearer } = require('./jwtHelper');
+const { verifyToken, parseBearer } = require('../jwtHelper');
 
 function authMiddleware(req, res, next) {
   try {

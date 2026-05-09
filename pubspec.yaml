@@ -41,6 +41,8 @@ dependencies:
   shared_preferences: ^2.5.4
   flutter_bloc: ^9.1.1
   bloc: ^9.2.0
+  unik_torch:
+    path: packages/unik_torch
 
 dev_dependencies:
   flutter_test:

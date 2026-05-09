@@ -2,9 +2,19 @@ const bcrypt = require('bcryptjs');
 const { prisma } = require('../prismaClient');
 const { signUser } = require('../jwtHelper');
 
+function normalizeEmail(value) {
+  const s = String(value ?? '').trim().toLowerCase();
+  if (!s) {
+    const err = new Error('Invalid email');
+    err.status = 400;
+    throw err;
+  }
+  return s;
+}
+
 async function registerUser({ email, password, fullName, nickname }) {
-  const normalized = email.trim().toLowerCase();
-  const dup = await prisma.user.findUnique({ where: { email: normalized } });
+  const normalized = normalizeEmail(email);
+  const dup = await prisma.user.findFirst({ where: { email: normalized } });
   if (dup) {
     const err = new Error('Email already registered');
     err.status = 409;
@@ -24,8 +34,8 @@ async function registerUser({ email, password, fullName, nickname }) {
 }
 
 async function loginUser(email, password) {
-  const normalized = email.trim().toLowerCase();
-  const user = await prisma.user.findUnique({ where: { email: normalized } });
+  const normalized = normalizeEmail(email);
+  const user = await prisma.user.findFirst({ where: { email: normalized } });
   if (!user) {
     const err = new Error('Invalid email or password');
     err.status = 401;
@@ -51,7 +61,7 @@ async function updateUser(userId, { fullName, email, nickname, password }) {
     data.nickname = nickname?.trim() || null;
   }
   if (email != null) {
-    data.email = email.trim().toLowerCase();
+    data.email = normalizeEmail(email);
   }
   if (password && password.length) {
     data.passwordHash = await bcrypt.hash(password, 11);
