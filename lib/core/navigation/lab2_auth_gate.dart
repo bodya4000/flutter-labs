@@ -1,61 +1,40 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unik_mobile/app/lab2/device_pin_barrier.dart';
 import 'package:unik_mobile/app/lab2/login.dart';
 import 'package:unik_mobile/app/lab2/page.dart';
-import 'package:unik_mobile/core/config/app_scope.dart';
+import 'package:unik_mobile/state/app_registry.dart';
+import 'package:unik_mobile/state/auth_gate/auth_gate_cubit.dart';
+import 'package:unik_mobile/state/auth_gate/auth_gate_view_state.dart';
 
-class Lab2AuthGate extends StatefulWidget {
+class Lab2AuthGate extends StatelessWidget {
   const Lab2AuthGate({super.key});
 
   @override
-  State<Lab2AuthGate> createState() => _Lab2AuthGateState();
-}
-
-class _Lab2AuthGateState extends State<Lab2AuthGate> {
-  late Future<({bool loggedIn, bool online, bool pinActive})> _future;
-  bool _pinPassed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _future = _load();
-  }
-
-  Future<({bool loggedIn, bool online, bool pinActive})> _load() async {
-    final loggedIn = await AppScope.authService.isLoggedIn();
-    final online = await AppScope.connectivity.checkOnline();
-    final pinActive = await AppScope.devicePinVault.hasConfiguredPin();
-    return (loggedIn: loggedIn, online: online, pinActive: pinActive);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        final data = snapshot.data;
-        if (data == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (!data.loggedIn) {
-          return const LoginPage();
-        }
-        final needPin = data.pinActive && !_pinPassed;
-        if (needPin) {
-          return DevicePinBarrier(
-            onUnlocked: () => setState(() => _pinPassed = true),
-          );
-        }
-        return HomePage(warnOfflineOnOpen: !data.online);
-      },
+    return BlocProvider(
+      create: (_) => AuthGateCubit()..bootstrap(),
+      child: BlocConsumer<AuthGateCubit, AuthGateViewState>(
+        listenWhen: (p, c) =>
+            p.phase != c.phase && c.phase != AuthGatePhase.loading,
+        listener: (_, _) => GlobalSession.cubit.syncFromAuthService(),
+        builder: (context, s) {
+          switch (s.phase) {
+            case AuthGatePhase.loading:
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            case AuthGatePhase.login:
+              return const LoginPage();
+            case AuthGatePhase.pin:
+              return DevicePinBarrier(
+                onUnlocked: () => context.read<AuthGateCubit>().onPinUnlocked(),
+              );
+            case AuthGatePhase.home:
+              return HomePage(warnOfflineOnOpen: s.warnOfflineDashboard);
+          }
+        },
+      ),
     );
   }
 }

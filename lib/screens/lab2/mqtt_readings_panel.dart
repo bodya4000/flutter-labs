@@ -38,9 +38,7 @@ class MqttReadingsPanel extends StatelessWidget {
             children: [
               Icon(Icons.sensors, color: accent, size: 28),
               const SizedBox(width: AppSpacing.s12),
-              Expanded(
-                child: Text('Sensor feed', style: tt.titleMedium),
-              ),
+              Expanded(child: Text('Sensor feed', style: tt.titleMedium)),
             ],
           ),
           Text(
@@ -113,10 +111,7 @@ class _MetricTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: tt.bodySmall?.copyWith(color: AppTheme.muted),
-              ),
+              Text(label, style: tt.bodySmall?.copyWith(color: AppTheme.muted)),
               Text(
                 formatted,
                 style: tt.titleLarge?.copyWith(

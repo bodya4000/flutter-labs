@@ -98,9 +98,7 @@ final class MqttService {
         electricityKw: topic == MqttEvents.sensorElectricity
             ? value
             : _snapshot.electricityKw,
-        lightLux: topic == MqttEvents.sensorLight
-            ? value
-            : _snapshot.lightLux,
+        lightLux: topic == MqttEvents.sensorLight ? value : _snapshot.lightLux,
       );
       if (!_readings.isClosed) {
         _readings.add(_snapshot);

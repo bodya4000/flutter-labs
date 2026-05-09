@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/screens/lab1/spell_input_card.dart';
+import 'package:unik_mobile/state/lab1/spell_counter_cubit.dart';
+import 'package:unik_mobile/state/lab1/spell_state.dart';
 
-class Lab1Page extends StatefulWidget {
+class Lab1Page extends StatelessWidget {
   const Lab1Page({required this.title, super.key});
 
   final String title;
 
   @override
-  State<Lab1Page> createState() => _Lab1PageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => SpellCounterCubit(),
+      child: _Lab1SpellInputScope(title: title),
+    );
+  }
 }
 
-class _Lab1PageState extends State<Lab1Page> {
-  int _counter = 0;
+final class _Lab1SpellInputScope extends StatefulWidget {
+  const _Lab1SpellInputScope({required this.title});
+
+  final String title;
+
+  @override
+  State<_Lab1SpellInputScope> createState() => _Lab1SpellInputScopeState();
+}
+
+final class _Lab1SpellInputScopeState extends State<_Lab1SpellInputScope> {
   final TextEditingController _controller = TextEditingController();
-  String _message = 'Type a number and press Cast';
 
   @override
   void dispose() {
@@ -22,47 +37,9 @@ class _Lab1PageState extends State<Lab1Page> {
     super.dispose();
   }
 
-  bool get _isAvada {
-    return _controller.text.trim().toLowerCase() == 'avada kedavra';
-  }
-
-  int? get _parsedInput {
-    return int.tryParse(_controller.text.trim());
-  }
-
-  void _castSpell() {
-    final String value = _controller.text.trim();
-    setState(() {
-      if (value.toLowerCase() == 'avada kedavra') {
-        _counter = 0;
-        _message = 'Dark spell detected. Counter reset to 0.';
-        return;
-      }
-
-      final int? parsed = int.tryParse(value);
-      if (parsed == null) {
-        _message = 'Enter a valid integer or Avada Kedavra.';
-        return;
-      }
-
-      _counter += parsed;
-      _message = 'Spell power $parsed applied. Counter updated.';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    final int energy = _counter.abs() % 100;
-    final int? parsedInput = _parsedInput;
-    final bool hasInput = _controller.text.trim().isNotEmpty;
-    final bool canCast = _isAvada || parsedInput != null;
-    final Color cardColor = _isAvada
-        ? Colors.red.shade200
-        : parsedInput != null
-        ? Colors.green.shade200
-        : scheme.surfaceContainerHighest;
-
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: scheme.inversePrimary,
@@ -72,38 +49,47 @@ class _Lab1PageState extends State<Lab1Page> {
         padding: const EdgeInsets.all(AppSpacing.s16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Counter: $_counter',
-              style: Theme.of(context).textTheme.headlineLarge,
+          children: [
+            BlocBuilder<SpellCounterCubit, SpellState>(
+              builder: (ctx, spell) => Text(
+                'Counter: ${spell.counter}',
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
             ),
             const SizedBox(height: AppSpacing.s16),
-            SpellInputCard(
-              controller: _controller,
-              onChanged: (_) => setState(() {}),
-              energy: energy,
-              backgroundColor: cardColor,
+            BlocBuilder<SpellCounterCubit, SpellState>(
+              builder: (ctx, spell) => SpellInputCard(
+                controller: _controller,
+                onChanged: (value) =>
+                    ctx.read<SpellCounterCubit>().previewDraft(value),
+                energy: spell.energy,
+                backgroundColor: spell.cardTint(scheme),
+              ),
             ),
             const SizedBox(height: AppSpacing.s16),
-            Text(_message, textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.s8),
-            Text(
-              hasInput
-                  ? _isAvada
-                        ? 'Fatal spell mode'
-                        : parsedInput != null
-                        ? 'Numeric spell ready'
-                        : 'Unknown spell'
-                  : 'Waiting for spell',
-              style: Theme.of(context).textTheme.titleMedium,
+            BlocBuilder<SpellCounterCubit, SpellState>(
+              builder: (ctx, spell) => Column(
+                children: [
+                  Text(spell.message, textAlign: TextAlign.center),
+                  const SizedBox(height: AppSpacing.s8),
+                  Text(
+                    spell.modeBadge,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: canCast ? _castSpell : null,
-        icon: const Icon(Icons.auto_fix_high),
-        label: const Text('Cast'),
+      floatingActionButton: BlocBuilder<SpellCounterCubit, SpellState>(
+        builder: (ctx, spell) => FloatingActionButton.extended(
+          onPressed: spell.castEnabled
+              ? () => ctx.read<SpellCounterCubit>().cast()
+              : null,
+          icon: const Icon(Icons.auto_fix_high),
+          label: const Text('Cast'),
+        ),
       ),
     );
   }

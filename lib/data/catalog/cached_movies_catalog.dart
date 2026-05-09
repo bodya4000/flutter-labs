@@ -8,12 +8,7 @@ import 'package:unik_mobile/domain/catalog/movies_catalog_repository.dart';
 import 'package:unik_mobile/domain/user/user_repository.dart';
 
 final class CachedMoviesCatalog implements MoviesCatalogRepository {
-  CachedMoviesCatalog(
-    this._remote,
-    this._cache,
-    this._network,
-    this._users,
-  );
+  CachedMoviesCatalog(this._remote, this._cache, this._network, this._users);
 
   final MoviesRemoteGateway _remote;
   final MoviesJsonCache _cache;

@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-
-import 'package:unik_mobile/core/config/app_scope.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
 import 'package:unik_mobile/domain/auth/registration_validator.dart';
 
 abstract final class ProfilePinDialogs {
-  static Future<void> askSet(BuildContext outer) async {
+  static Future<String?> readConfirmedNewPin(BuildContext outer) async {
     final pin1 = TextEditingController();
     final pin2 = TextEditingController();
-    final saved = await showDialog<bool>(
+    final pin = await showDialog<String?>(
       context: outer,
-      builder: (ctx) {
-        String? err1;
-        String? err2;
-        return StatefulBuilder(
-          builder: (context, setLocal) => AlertDialog(
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (ctx, setLocal) {
+          String? err1;
+          String? err2;
+          return AlertDialog(
             title: const Text('Set device PIN'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -42,7 +40,7 @@ abstract final class ProfilePinDialogs {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
+                onPressed: () => Navigator.of(dialogCtx).pop(),
                 child: const Text('Cancel'),
               ),
               TextButton(
@@ -51,59 +49,50 @@ abstract final class ProfilePinDialogs {
                   final match = pin1.text.trim() == pin2.text.trim();
                   setLocal(() {
                     err1 = format;
-                    err2 =
-                        match ? null : 'PINs do not match';
+                    err2 = match ? null : 'PINs do not match';
                   });
                   if (format != null || !match) {
                     return;
                   }
-                  Navigator.of(ctx).pop(true);
+                  Navigator.of(dialogCtx).pop(pin1.text.trim());
                 },
                 child: const Text('Save'),
               ),
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
-    if (saved == true) {
-      await AppScope.devicePinVault.setPinFromPlain(pin1.text);
-    }
     pin1.dispose();
     pin2.dispose();
+    return pin;
   }
 
-  static Future<String?> askRemove(BuildContext outer) async {
-    final pin = TextEditingController();
-    final res = await showDialog<String?>(
+  static Future<String?> readCurrentPinGuess(BuildContext outer) async {
+    final pinCtl = TextEditingController();
+    final pin = await showDialog<String?>(
       context: outer,
-      builder: (ctx) => AlertDialog(
+      builder: (dialogCtx) => AlertDialog(
         title: const Text('Remove PIN'),
         content: TextField(
-          controller: pin,
+          controller: pinCtl,
           keyboardType: TextInputType.number,
           obscureText: true,
           decoration: const InputDecoration(labelText: 'Current PIN'),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
+            onPressed: () => Navigator.of(dialogCtx).pop(),
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () async {
-              final good = await AppScope.devicePinVault.verifyPin(pin.text);
-              if (!ctx.mounted) {
-                return;
-              }
-              Navigator.of(ctx).pop(good ? 'ok' : 'bad');
-            },
+            onPressed: () => Navigator.of(dialogCtx).pop(pinCtl.text.trim()),
             child: const Text('Remove'),
           ),
         ],
       ),
     );
-    pin.dispose();
-    return res;
+    pinCtl.dispose();
+    return pin;
   }
 }

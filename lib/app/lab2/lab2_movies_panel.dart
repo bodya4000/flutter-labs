@@ -1,25 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
-import 'package:unik_mobile/domain/catalog/movie.dart';
-import 'package:unik_mobile/domain/catalog/movies_catalog_repository.dart';
+import 'package:unik_mobile/state/movies/movies_cubit.dart';
+import 'package:unik_mobile/state/movies/movies_state.dart';
 
-class Lab2MoviesPanel extends StatefulWidget {
-  const Lab2MoviesPanel({required this.catalog, super.key});
-
-  final MoviesCatalogRepository catalog;
-
-  @override
-  State<Lab2MoviesPanel> createState() => _Lab2MoviesPanelState();
-}
-
-class _Lab2MoviesPanelState extends State<Lab2MoviesPanel> {
-  late final Future<List<Movie>> _load;
-
-  @override
-  void initState() {
-    super.initState();
-    _load = widget.catalog.loadPreferRemote();
-  }
+class Lab2MoviesPanel extends StatelessWidget {
+  const Lab2MoviesPanel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,22 +15,22 @@ class _Lab2MoviesPanelState extends State<Lab2MoviesPanel> {
       children: [
         Text('Catalog (API)', style: tt.titleLarge),
         const SizedBox(height: AppSpacing.s8),
-        FutureBuilder<List<Movie>>(
-          future: _load,
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done) {
+        BlocBuilder<MoviesCubit, MoviesCatalogState>(
+          builder: (ctx, catalog) {
+            final phase = catalog.phase;
+            if (phase == MoviesPhase.loading || phase == MoviesPhase.idle) {
               return const Padding(
                 padding: EdgeInsets.all(AppSpacing.s16),
                 child: Center(child: CircularProgressIndicator()),
               );
             }
-            if (snap.hasError) {
+            if (phase == MoviesPhase.error) {
               return Text(
                 'Could not load catalog',
                 style: tt.bodyMedium?.copyWith(color: AppTheme.error),
               );
             }
-            final list = snap.data ?? <Movie>[];
+            final list = catalog.items;
             if (list.isEmpty) {
               return Text(
                 'No cached items yet — go online once to sync.',
@@ -56,12 +42,12 @@ class _Lab2MoviesPanelState extends State<Lab2MoviesPanel> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: list.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (ctx, i) {
-                final m = list[i];
+              itemBuilder: (context, index) {
+                final item = list[index];
                 return ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(m.title),
-                  subtitle: Text('Year ${m.year}'),
+                  title: Text(item.title),
+                  subtitle: Text('Year ${item.year}'),
                 );
               },
             );

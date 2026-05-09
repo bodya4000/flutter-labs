@@ -13,13 +13,7 @@ final class AuthCredentialsFlow {
   final ConnectivityService _net;
   final AuthNetworking _netAuth;
 
-  Future<
-        ({
-          AuthOutcome outcome,
-          RegisteredUser? user,
-        })
-      >
-      register({
+  Future<({AuthOutcome outcome, RegisteredUser? user})> register({
     required String fullName,
     required String email,
     required String password,
@@ -59,13 +53,7 @@ final class AuthCredentialsFlow {
     return (outcome: AuthOutcome.success, user: merged);
   }
 
-  Future<
-        ({
-          AuthOutcome outcome,
-          RegisteredUser? user,
-        })
-      >
-      login({
+  Future<({AuthOutcome outcome, RegisteredUser? user})> login({
     required String email,
     required String password,
   }) async {

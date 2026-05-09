@@ -13,11 +13,7 @@ final class MoviesRemoteGateway {
     );
     final raw = res.data!['movies']! as List<dynamic>;
     return raw
-        .map(
-          (dynamic e) => Movie.fromJson(
-            Map<String, Object?>.from(e as Map),
-          ),
-        )
+        .map((dynamic e) => Movie.fromJson(Map<String, Object?>.from(e as Map)))
         .toList();
   }
 }

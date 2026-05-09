@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/core/config/app_scope.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:unik_mobile/core/navigation/lab2_navigation.dart';
 import 'package:unik_mobile/core/theme/app_theme.dart';
+import 'package:unik_mobile/state/session/session_cubit.dart';
 import 'package:unik_mobile/widgets/app_button.dart';
 
 class ActionButtons extends StatelessWidget {
@@ -50,8 +51,7 @@ class ActionButtons extends StatelessWidget {
             if (ok != true || !context.mounted) {
               return;
             }
-            await AppScope.authService.logout();
-            await AppScope.mqtt.disconnect();
+            await context.read<SessionCubit>().signOutAndDisconnectMqtt();
             if (!context.mounted) {
               return;
             }
