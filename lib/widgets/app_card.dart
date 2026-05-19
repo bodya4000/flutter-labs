@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unik_mobile/theme/app_theme.dart';
+import 'package:unik_mobile/core/theme/app_theme.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({
@@ -23,10 +23,7 @@ class AppCard extends StatelessWidget {
         color: color,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Padding(
-        padding: padding,
-        child: child,
-      ),
+      child: Padding(padding: padding, child: child),
     );
   }
 }
