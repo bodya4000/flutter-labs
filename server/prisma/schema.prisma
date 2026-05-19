@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@127.0.0.1:3306/unik_mobile"
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  fullName     String   @db.VarChar(255)
+  nickname     String?  @db.VarChar(255)
+  createdAt    DateTime @default(now())
+}
+
+model Movie {
+  id    Int    @id @default(autoincrement())
+  title String @db.VarChar(255)
+  year  Int
+}
